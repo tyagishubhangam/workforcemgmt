@@ -82,15 +82,33 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                             != TaskStatus.COMPLETED).collect(Collectors.toList());
 
 
-// TODO: BUG #1 is here. It should assign one and cancel the rest.
-// Instead, it reassigns ALL of them.
+
+
+            //FIX: BUG #1
+            // Fixed the logic so that when a task is reassigned, the old task for the previous employee is marked as CANCELLED.
             if (!tasksOfType.isEmpty()) {
                 for (TaskManagement taskToUpdate : tasksOfType) {
-                    taskToUpdate.setAssigneeId(request.getAssigneeId());
+                    // Updating the task to cancelled for previous assignee
+                    taskToUpdate.setStatus(TaskStatus.CANCELLED);
+                    taskToUpdate.setDescription("This task is cancelled.");
                     taskRepository.save(taskToUpdate);
+
+                    // Creating new task with new assigneeId
+                    TaskManagement newTask = new TaskManagement();
+                    newTask.setReferenceId(taskToUpdate.getReferenceId());
+                    newTask.setReferenceType(taskToUpdate.getReferenceType());
+                    newTask.setTask(taskToUpdate.getTask());
+                    newTask.setAssigneeId(taskToUpdate.getAssigneeId());
+                    newTask.setPriority(taskToUpdate.getPriority());
+                    newTask.setTaskDeadlineTime(taskToUpdate.getTaskDeadlineTime());
+                    newTask.setStatus(TaskStatus.ASSIGNED);
+                    newTask.setDescription("New task assigned.");
+                    taskRepository.save(newTask);
+
+
                 }
             } else {
-// Create a new task if none exist
+            // Create a new task if none exist
                 TaskManagement newTask = new TaskManagement();
                 newTask.setReferenceId(request.getReferenceId());
                 newTask.setReferenceType(request.getReferenceType());
