@@ -128,13 +128,13 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                 taskRepository.findByAssigneeIdIn(request.getAssigneeIds());
 
 
-// TODO: BUG #2 is here. It should filter out CANCELLED tasks but doesn't.
-        List<TaskManagement> filteredTasks = tasks.stream().filter(task -> {
-// This logic is incomplete for the assignment.
-// It should check against startDate and endDate.
-// For now, it just returns all tasks for the assignees.
-                    return true;
-                })
+// FIX: BUG #2 is fixed. It now filters out CANCELLED tasks means it donot displays cancelled tasks.
+        // It now checks against startDate and endDate.
+
+        List<TaskManagement> filteredTasks = tasks.stream().filter(
+                task -> !task.getStatus().equals(TaskStatus.CANCELLED))
+                    .filter(task -> task.getTaskDeadlineTime() >= request.getStartDate())
+                    .filter(task -> task.getTaskDeadlineTime() <= request.getEndDate())
                 .collect(Collectors.toList());
         return taskMapper.modelListToDtoList(filteredTasks);
     }
