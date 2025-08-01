@@ -41,6 +41,7 @@ public class InMemoryTaskRepository implements TaskRepository {
     private void createSeedTask(Long refId, ReferenceType refType, Task
             task, Long assigneeId, TaskStatus status, Priority priority) {
         long newId = idCounter.incrementAndGet();
+
         TaskManagement newTask = new TaskManagement();
         newTask.setId(newId);
         newTask.setReferenceId(refId);
@@ -78,8 +79,7 @@ public class InMemoryTaskRepository implements TaskRepository {
 
 
     @Override
-    public List<TaskManagement> findByReferenceIdAndReferenceType(Long
-                                                                          referenceId, ReferenceType referenceType) {
+    public List<TaskManagement> findByReferenceIdAndReferenceType(Long referenceId, ReferenceType referenceType) {
         return taskStore.values().stream()
                 .filter(task -> task.getReferenceId().equals(referenceId)
                         && task.getReferenceType().equals(referenceType))
