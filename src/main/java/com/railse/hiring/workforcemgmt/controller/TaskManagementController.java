@@ -21,7 +21,7 @@ public class TaskManagementController {
 
 
     @GetMapping("/{id}")
-    public Response<TaskManagementDto> getTaskById(@PathVariable Long id) {
+    public Response<TaskManagementWithActivityAndCommentsDto> getTaskById(@PathVariable Long id) {
         return new Response<>(taskManagementService.findTaskById(id));
     }
 
@@ -63,6 +63,12 @@ public class TaskManagementController {
     @GetMapping("/tasks/priority/{priority}")
     public Response<List<TaskManagementDto>> getTasksByPriority(@PathVariable Priority priority) {
         return new Response<>(taskManagementService.fetchTasksByPriority(priority));
+    }
+
+    // API for adding comments to tasks
+    @PostMapping("/tasks/{taskId}/comments")
+    public Response<TaskManagementWithActivityAndCommentsDto> addComment(@PathVariable Long taskId, @RequestBody @Valid AddCommentRequest request) {
+        return new Response<>(taskManagementService.addComment(taskId, request));
     }
 
 }
