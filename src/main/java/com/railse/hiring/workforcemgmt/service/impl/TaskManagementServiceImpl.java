@@ -1,5 +1,6 @@
 package com.railse.hiring.workforcemgmt.service.impl;
 
+import com.railse.hiring.workforcemgmt.model.enums.Priority;
 import com.railse.hiring.workforcemgmt.service.TaskManagementService;
 import com.railse.hiring.workforcemgmt.common.exception.ResourceNotFoundException;
 import com.railse.hiring.workforcemgmt.dto.*;
@@ -12,6 +13,7 @@ import com.railse.hiring.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -144,6 +146,30 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                 )
                 .collect(Collectors.toList());
         return taskMapper.modelListToDtoList(filteredTasks);
+    }
+
+
+    // For getting tasks of specific priority
+    @Override
+    public List<TaskManagementDto> fetchTasksByPriority(Priority priority) {
+        List<TaskManagement> tasks = taskRepository.findByPriority(priority);
+        return taskMapper.modelListToDtoList(tasks);
+    }
+
+    @Override
+    public TaskManagementDto updateTaskPriority(Long taskId, Priority priority) {
+        TaskManagement task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+        task.setPriority(priority);
+        taskRepository.save(task);
+        return taskMapper.modelToDto(task);
+
+
+
+
+
+
+
     }
 }
 
