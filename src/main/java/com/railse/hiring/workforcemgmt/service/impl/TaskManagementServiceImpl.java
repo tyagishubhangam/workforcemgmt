@@ -98,7 +98,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                     newTask.setReferenceId(taskToUpdate.getReferenceId());
                     newTask.setReferenceType(taskToUpdate.getReferenceType());
                     newTask.setTask(taskToUpdate.getTask());
-                    newTask.setAssigneeId(taskToUpdate.getAssigneeId());
+                    newTask.setAssigneeId(request.getAssigneeId());
                     newTask.setPriority(taskToUpdate.getPriority());
                     newTask.setTaskDeadlineTime(taskToUpdate.getTaskDeadlineTime());
                     newTask.setStatus(TaskStatus.ASSIGNED);
@@ -124,17 +124,24 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     @Override
     public List<TaskManagementDto> fetchTasksByDate(TaskFetchByDateRequest
                                                             request) {
-        List<TaskManagement> tasks =
-                taskRepository.findByAssigneeIdIn(request.getAssigneeIds());
+        List<TaskManagement> tasks;
+        if(request.getAssigneeIds() == null || request.getAssigneeIds().isEmpty()) {
+            tasks = taskRepository.findAll();
+        }else{
+            tasks =
+                    taskRepository.findByAssigneeIdIn(request.getAssigneeIds());
+        }
 
-
-// FIX: BUG #2 is fixed. It now filters out CANCELLED tasks means it donot displays cancelled tasks.
+        // FIX: BUG #2 is fixed. It now filters out CANCELLED tasks means it donot displays cancelled tasks.
         // It now checks against startDate and endDate.
 
         List<TaskManagement> filteredTasks = tasks.stream().filter(
-                task -> !task.getStatus().equals(TaskStatus.CANCELLED))
-                    .filter(task -> task.getTaskDeadlineTime() >= request.getStartDate())
-                    .filter(task -> task.getTaskDeadlineTime() <= request.getEndDate())
+                task -> !task.getStatus().equals(TaskStatus.CANCELLED) && !task.getStatus().equals(TaskStatus.COMPLETED))
+                .filter(task ->
+                        // Either deadline is within the range
+                        // OR deadline is before startDate (still active, overdue/pending)
+                        task.getTaskDeadlineTime() < request.getStartDate() || task.getTaskDeadlineTime() <= request.getEndDate()
+                )
                 .collect(Collectors.toList());
         return taskMapper.modelListToDtoList(filteredTasks);
     }
