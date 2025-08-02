@@ -21,7 +21,7 @@ public class TaskManagementController {
 
 
     @GetMapping("/{id}")
-    public Response<TaskManagementDto> getTaskById(@PathVariable Long id) {
+    public Response<TaskManagementWithActivityAndCommentsDto> getTaskById(@PathVariable Long id) {
         return new Response<>(taskManagementService.findTaskById(id));
     }
 

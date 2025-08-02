@@ -14,7 +14,7 @@ public interface TaskManagementService {
     List<TaskManagementDto> updateTasks(UpdateTaskRequest request);
     String assignByReference(AssignByReferenceRequest request);
     List<TaskManagementDto> fetchTasksByDate(TaskFetchByDateRequest request);
-    TaskManagementDto findTaskById(Long id);
+    TaskManagementWithActivityAndCommentsDto findTaskById(Long id);
 
     // NEW METHOD for Feature 2
     TaskManagementDto updateTaskPriority(Long taskId, Priority priority);

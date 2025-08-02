@@ -1,6 +1,10 @@
-package com.railse.hiring.workforcemgmt.model;
+package com.railse.hiring.workforcemgmt.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
+import com.railse.hiring.workforcemgmt.model.Activity;
+import com.railse.hiring.workforcemgmt.model.Comment;
 import com.railse.hiring.workforcemgmt.model.enums.Priority;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
 import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
@@ -9,18 +13,18 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TaskManagement {
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class TaskManagementWithActivityAndCommentsDto {
     private Long id;
     private Long referenceId;
     private ReferenceType referenceType;
     private Task task;
     private String description;
     private TaskStatus status;
-    private Long assigneeId; // Simplified from Entity for this assignment
+    private Long assigneeId;
     private Long taskDeadlineTime;
     private Priority priority;
 
-    //Added new fields for task-comments and activity log
     private List<Comment> comments;
     private List<Activity> activityHistory;
 }
