@@ -6,6 +6,8 @@ import com.railse.hiring.workforcemgmt.model.enums.Priority;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
 import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,9 +32,9 @@ public class InMemoryTaskRepository implements TaskRepository {
         createSeedTask(201L, ReferenceType.ENTITY,
                 Task.ASSIGN_CUSTOMER_TO_SALES_PERSON, 2L, TaskStatus.ASSIGNED,
                 Priority.LOW);
-        createSeedTask(201L, ReferenceType.ENTITY,
-                Task.ASSIGN_CUSTOMER_TO_SALES_PERSON, 3L, TaskStatus.ASSIGNED,
-                Priority.LOW); // Duplicate for Bug #1
+//        createSeedTask(201L, ReferenceType.ENTITY,
+//                Task.ASSIGN_CUSTOMER_TO_SALES_PERSON, 3L, TaskStatus.ASSIGNED,
+//                Priority.LOW); // Duplicate for Bug #1
         createSeedTask(103L, ReferenceType.ORDER, Task.COLLECT_PAYMENT, 1L,
                 TaskStatus.CANCELLED, Priority.MEDIUM); // For Bug #2
     }
@@ -51,8 +53,10 @@ public class InMemoryTaskRepository implements TaskRepository {
         newTask.setStatus(status);
         newTask.setPriority(priority);
         newTask.setDescription("This is a seed task.");
-        newTask.setTaskDeadlineTime(System.currentTimeMillis() + 86400000);
-// 1 day from now
+        newTask.setTaskDeadlineTime(System.currentTimeMillis() + 86400000);// 1 day from now
+        newTask.setComments(new ArrayList<>());
+        newTask.setActivityHistory(new ArrayList<>());
+
         taskStore.put(newId, newTask);
     }
 
@@ -66,6 +70,12 @@ public class InMemoryTaskRepository implements TaskRepository {
     public TaskManagement save(TaskManagement task) {
         if (task.getId() == null) {
             task.setId(idCounter.incrementAndGet());
+        }
+        if(task.getAssigneeId() == null) {
+            task.setActivityHistory(new ArrayList<>());
+        }
+        if(task.getComments() == null) {
+            task.setComments(new ArrayList<>());
         }
         taskStore.put(task.getId(), task);
         return task;

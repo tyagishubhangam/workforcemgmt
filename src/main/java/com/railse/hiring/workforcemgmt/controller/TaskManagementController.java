@@ -65,4 +65,10 @@ public class TaskManagementController {
         return new Response<>(taskManagementService.fetchTasksByPriority(priority));
     }
 
+    // API for adding comments to tasks
+    @PostMapping("/tasks/{taskId}/comments")
+    public Response<TaskManagementWithActivityAndCommentsDto> addComment(@PathVariable Long taskId, @RequestBody @Valid AddCommentRequest request) {
+        return new Response<>(taskManagementService.addComment(taskId, request));
+    }
+
 }
