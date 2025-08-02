@@ -149,6 +149,13 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     }
 
 
+    // For getting tasks of specific priority
+    @Override
+    public List<TaskManagementDto> fetchTasksByPriority(Priority priority) {
+        List<TaskManagement> tasks = taskRepository.findByPriority(priority);
+        return taskMapper.modelListToDtoList(tasks);
+    }
+
     @Override
     public TaskManagementDto updateTaskPriority(Long taskId, Priority priority) {
         TaskManagement task = taskRepository.findById(taskId)
@@ -156,6 +163,12 @@ public class TaskManagementServiceImpl implements TaskManagementService {
         task.setPriority(priority);
         taskRepository.save(task);
         return taskMapper.modelToDto(task);
+
+
+
+
+
+
 
     }
 }
