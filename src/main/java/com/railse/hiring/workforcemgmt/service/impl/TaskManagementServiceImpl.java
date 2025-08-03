@@ -195,7 +195,10 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     @Override
     public List<TaskManagementDto> fetchTasksByPriority(Priority priority) {
         List<TaskManagement> tasks = taskRepository.findByPriority(priority);
-        return taskMapper.modelListToDtoList(tasks);
+        List<TaskManagement> filteredTasks = tasks.stream().filter(
+                task -> !task.getStatus().equals(TaskStatus.CANCELLED)
+        ).toList();
+        return taskMapper.modelListToDtoList(filteredTasks);
     }
 
     @Override
