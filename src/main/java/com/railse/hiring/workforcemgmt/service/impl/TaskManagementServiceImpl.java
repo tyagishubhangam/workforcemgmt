@@ -12,12 +12,10 @@ import com.railse.hiring.workforcemgmt.model.TaskManagement;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
 import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
 import com.railse.hiring.workforcemgmt.repository.TaskRepository;
-import com.railse.hiring.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -39,6 +37,9 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     public TaskManagementWithActivityAndCommentsDto findTaskById(Long id) {
         TaskManagement task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+        // Sort comments and activity history in descending order (most recent first)
+        task.getComments().sort(Comparator.comparing(Comment::getTimestamp).reversed());
+        task.getActivityHistory().sort(Comparator.comparing(Activity::getTimestamp).reversed());
         return taskMapper.modelToDtoWithActivityAndComments(task);
     }
     @Override
@@ -130,7 +131,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                     newTask.setPriority(taskToUpdate.getPriority());
                     newTask.setTaskDeadlineTime(taskToUpdate.getTaskDeadlineTime());
                     newTask.setStatus(TaskStatus.ASSIGNED);
-                    newTask.setDescription("New task assigned.");
+                    newTask.setDescription("New task is assigned.");
                     // Initial Logging of activity to the task.
                     // Since user is currently not implemented therefore just inserted a demo user.
                     List<Activity> activities = new ArrayList<>();
