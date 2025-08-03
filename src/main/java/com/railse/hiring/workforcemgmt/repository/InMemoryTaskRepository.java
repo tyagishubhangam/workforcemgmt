@@ -1,6 +1,7 @@
 package com.railse.hiring.workforcemgmt.repository;
 
 import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
+import com.railse.hiring.workforcemgmt.model.Activity;
 import com.railse.hiring.workforcemgmt.model.TaskManagement;
 import com.railse.hiring.workforcemgmt.model.enums.Priority;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
@@ -56,6 +57,7 @@ public class InMemoryTaskRepository implements TaskRepository {
         newTask.setTaskDeadlineTime(System.currentTimeMillis() + 86400000);// 1 day from now
         newTask.setComments(new ArrayList<>());
         newTask.setActivityHistory(new ArrayList<>());
+        newTask.getActivityHistory().add(new Activity("Task Created","User", System.currentTimeMillis()));
 
         taskStore.put(newId, newTask);
     }
